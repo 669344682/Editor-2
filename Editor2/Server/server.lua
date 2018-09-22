@@ -246,11 +246,12 @@ local ta = {}
 		if type == 'gamemode' then
 			local edf = getResourceInfo(v,'edf:definition')
 			if edf then
-				local file = xmlLoadFile (getResourceName(v)..'/'..edf)
+				local file = xmlLoadFile (':'..getResourceName(v)..'/'..edf)
 				if file then
 					local children = xmlNodeGetChildren(file)
-					print(xmlNodeGetAttributes (children))
+					--iprint(xmlNodeGetAttributes (children[1]))
 				end
+				xmlUnloadFile(file)
 			end
 			table.insert(ta,getResourceName(v))
 		end

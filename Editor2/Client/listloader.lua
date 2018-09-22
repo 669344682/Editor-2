@@ -14,19 +14,6 @@ lists = {'Alpha and Non Collidable',
 'Wires and Cables'
 }
 
-function string.split(str)
-
-   if not str or type(str) ~= "string" then return false end
-
-   local splitStr = {}
-   for i=1,string.len(str) do
-      local char = str:sub( i, i )
-      table.insert( splitStr , char )
-   end
-
-   return splitStr 
-end
-
 
 for i,v in pairs(lists) do
 	local File =  fileOpen('lists/'..v..'.list')   
@@ -37,7 +24,7 @@ for i,v in pairs(lists) do
 	buttons.right.menu['New Element'].lists[v] = {}
 	Parent = nil
 	for iA,vA in pairs(Proccessed) do
-		if string.split(vA)[1] == '#' then
+		if vA:sub( 1, 1 ) == '#' then
 				Parent = string.gsub(vA,'#','')
 				table.insert(buttons.right.menu['New Element'].lists[v],{Parent,'List'})
 				buttons.right.menu['New Element'].lists[Parent] = {}

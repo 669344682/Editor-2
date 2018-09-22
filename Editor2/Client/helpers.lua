@@ -454,7 +454,7 @@ function setElementPositions(x,y,z,_,ignore)
 			killTimer(TIMER)
 		end
 		
-		GXa,GYa,GZa = (GXa + x),(GYa + y),(GZa + z)
+		GXa,GYa,GZa = ((tonumber(GXa) or 0) + x),((tonumber(GYa) or 0) + y),((tonumber(GZa) or 0) + z)
 		
 		minDistance = global.Mangets
 		minODistance = 1000
