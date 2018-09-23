@@ -170,7 +170,7 @@ function functions.prepImage(path,mip)
 	if path then
 		local path = 'images/'..path..'.png'
 
-		if (not images[path]) then
+		if (not images[path]) and fileExists(path) then
 			images[path] = {}
 			local img = fileOpen(path)
 			local pixels = fileRead(img, fileGetSize(img))
@@ -179,7 +179,11 @@ function functions.prepImage(path,mip)
 			images[path].scale = {x,y}
 			images[path].image = images[path].image or dxCreateTexture(path,'dxt5',not mip,'clamp')--not mip
 		end
-		return images[path].image,images[path].scale
+		if fileExists(path) then
+			return images[path].image,images[path].scale
+		else
+			return nil
+		end
 	end
 end
 

@@ -241,6 +241,7 @@ end
 
 functions['getGamemodes'] = function ()
 local ta = {}
+local edfTable = {}
 	for i,v in pairs(getResources ()) do
 		local type = getResourceInfo (v,'type') 
 		if type == 'gamemode' then
@@ -249,13 +250,17 @@ local ta = {}
 				local file = xmlLoadFile (':'..getResourceName(v)..'/'..edf)
 				if file then
 					local children = xmlNodeGetChildren(file)
-					--iprint(xmlNodeGetAttributes (children[1]))
+					for ia,va in pairs(children) do
+						local type = xmlNodeGetName (va)
+						local information = xmlNodeGetAttributes(va)
+						table.insert(edfTable,{getResourceName(v),type,information})
+					end
 				end
 				xmlUnloadFile(file)
 			end
 			table.insert(ta,getResourceName(v))
 		end
 	end
-	callC(client,'refreshGamemods',ta)
+	callC(client,'refreshGamemods',ta,edfTable)
 end
 

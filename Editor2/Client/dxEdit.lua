@@ -23,9 +23,10 @@ backcount = 40
 function dxDrawEditBox(x,y,w,h,fs,f,fc,id,text,Type,ebc,dc)--x,y,width,height,font size,font,font color,default text,type,edit box color,dashcolor
 
 	TextStuff[id] = TextStuff[id] or {}
-	TextStuff[id]['Type'] = Type and 2 or 1
+	TextStuff[id]['Type'] = Type or 1
 	TextStuff[id]['font'] = {fs,f}
-
+	
+	
 	countEE = countEE + 1
 	if not (TextStuff[id][1] == text) then
 		refreshString(text,id,true)
@@ -124,6 +125,10 @@ function dxEdit(button,real)
 							TextStuff[EditSelected]['Selected'] = string.len(TextStuff[EditSelected]['text'])
 						end
 						button = tonumber(button) or allowed[button]
+					elseif TextStuff[EditSelected]['Type'] == 3 then
+						button = tonumber(button) or (button == '-' and '-')
+					elseif TextStuff[EditSelected]['Type'] == 4 then
+						button = tonumber(button)
 					end
 
 					local stringE = TextStuff[EditSelected]['text']

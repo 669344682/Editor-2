@@ -1,9 +1,9 @@
 <meta>
 	<info type="script" name="Map Editor 2.0" author="CodyJ" description="JEditor" version="1.0.0" />
 	<oop>true</oop> <!--Barley used OOP but is required for the rotations to work properly // TODO - MOVE MATRIXES OVER TO OOP //-->
-	<script type="server" src="server/server.lua" />
-	<script type="server" src="server/save.lua" />
-	<script type="server" src="server/load.lua" />
+	<script type="server" src="Server/server.lua" />
+	<script type="server" src="Server/save.lua" />
+	<script type="server" src="Server/load.lua" />
 	
 	<script type="client" src="Client/helpers.lua" />
 	<script type="client" src="Client/colorpicker.lua" />
@@ -42,7 +42,7 @@
 		<file src="Images/Check.png" />
 		<file src="Images/Object.png" />
 		<file src="Images/Depth.png" />
-		<file src="Images/Rectangle.png" />
+		<file src="Images/rectangle.png" />
 		<file src="Images/deselect.png" />
 		<file src="Images/delete.png" />
 		<file src="Images/coordinateMisc.png" />

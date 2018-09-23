@@ -1290,13 +1290,15 @@ guiTypes['Option'] = function (wStart,hStart,path,iTable,side) --v[1],rStart,sta
 		global.count[path] = global.count[path] or 1 -- Kinda shitty
 		
 		local hoverA = hover == path and 150 or 255
-		dxDrawImage((wStart+5)*s, (hStart)*s, 24*s, 24*s,image, 0, 0, 0, tocolor(255, 255, 255, 255), true)	
-		dxDrawText(path,(wStart+35)*s, hStart*s, (wStart+219)*s, (hStart+24)*s, tocolor(255, 255, 255, 220), 1.00*s, "default-bold", "left", "center", false, false, true, false, false)
+		if image then
+			dxDrawImage((wStart+5)*s, (hStart)*s, 24*s, 24*s,image, 0, 0, 0, tocolor(255, 255, 255, 255), true)	
+		end
+		dxDrawText(path,(wStart+(image and 35 or 20))*s, hStart*s, (wStart+219)*s, (hStart+24)*s, tocolor(255, 255, 255, 255), 1.00*s, "default-bold", "left", "center", false, false, true, false, false)
 		dxDrawText(iTable[global.count[path]],(wStart+120)*s, hStart*s, (wStart+200)*s, (hStart+24)*s, tocolor(255, 255, 255, 255), 1.00*s, "default-bold", "center", "center", false, false, true, false, false)
-		local hoverL = functions.isCursorOnElement((wStart+100)*s, (hStart+7.5)*s, 15*s, 10*s,'Option',-1,path,#iTable,iTable) and 150 or 255
-		dxDrawImage((wStart+100)*s, (hStart+7.5)*s, 15*s, 10*s,arrow, 0, 0, 0, tocolor(hoverL, hoverL, hoverL, 255), true)	
-		local hoverR = functions.isCursorOnElement((wStart+200)*s, (hStart+7.5)*s, 15*s, 10*s,'Option',1,path,#iTable,iTable) and 150 or 255
-		dxDrawImage((wStart+200)*s, (hStart+7.5)*s, 15*s, 10*s,arrow, 180, 0, 0, tocolor(hoverR, hoverR, hoverR, 255), true)	
+		local hoverL = functions.isCursorOnElement((wStart+115)*s, (hStart+7.5)*s, 15*s, 10*s,'Option',-1,path,#iTable,iTable) and 150 or 255
+		dxDrawImage((wStart+115)*s, (hStart+7.5)*s, 15*s, 10*s,arrow, 0, 0, 0, tocolor(hoverL, hoverL, hoverL, 255), true)	
+		local hoverR = functions.isCursorOnElement((wStart+185)*s, (hStart+7.5)*s, 15*s, 10*s,'Option',1,path,#iTable,iTable) and 150 or 255
+		dxDrawImage((wStart+185)*s, (hStart+7.5)*s, 15*s, 10*s,arrow, 180, 0, 0, tocolor(hoverR, hoverR, hoverR, 255), true)	
 
 
 	if functions.isCursorOnElement(wStart*s, hStart*s, 215*s, 10*s,'Option',path,#iTable) then
@@ -1539,11 +1541,34 @@ guiTypes['Number'] = function (wStart,hStart,name,iTable,side,subtract,indexing)
 
 	local alpha = hover and 50 or 70
 
-	local edit = dxDrawEditBox((wStart+120)*s,hStart*s, (120-(subtract or 0))*s, 24*s,1*s,'default',tocolor(15,15,15),name,iTable,true) --// Modified version
+	local edit = dxDrawEditBox((wStart+120)*s,hStart*s, (120-(subtract or 0))*s, 24*s,1*s,'default',tocolor(15,15,15),name,iTable,2) --// Modified version
 
 	TextA = TextA + 1
 	dxDrawText( name, (wStart+20)*s, hStart*s, (wStart+239)*s, (hStart+24)*s, tocolor(255, 255, 255, 255), 1.00*s, "default-bold", "left", "center", false, false, true, false, false)
 end
+
+guiTypes['Whole Positive Number'] = function (wStart,hStart,name,iTable,side,subtract,indexing)
+	local hover = functions.isCursorOnElement((wStart+120)*s,hStart*s, (120-(subtract or 0))*s, 24*s,'Text',name,Text[name] or iTable)
+
+	local alpha = hover and 50 or 70
+
+	local edit = dxDrawEditBox((wStart+120)*s,hStart*s, (120-(subtract or 0))*s, 24*s,1*s,'default',tocolor(15,15,15),name,iTable,4)
+
+	TextA = TextA + 1
+	dxDrawText( name, (wStart+20)*s, hStart*s, (wStart+239)*s, (hStart+24)*s, tocolor(255, 255, 255, 255), 1.00*s, "default-bold", "left", "center", false, false, true, false, false)
+end
+
+guiTypes['integer'] = function (wStart,hStart,name,iTable,side,subtract,indexing)
+	local hover = functions.isCursorOnElement((wStart+120)*s,hStart*s, (120-(subtract or 0))*s, 24*s,'Text',name,Text[name] or iTable)
+
+	local alpha = hover and 50 or 70
+
+	local edit = dxDrawEditBox((wStart+120)*s,hStart*s, (120-(subtract or 0))*s, 24*s,1*s,'default',tocolor(15,15,15),name,iTable,3)
+
+	TextA = TextA + 1
+	dxDrawText( name, (wStart+20)*s, hStart*s, (wStart+239)*s, (hStart+24)*s, tocolor(255, 255, 255, 255), 1.00*s, "default-bold", "left", "center", false, false, true, false, false)
+end
+
 
 
 guiTypes['Check box'] = function (wStart,hStart,name,iTable,side,subtract,indexing) 
