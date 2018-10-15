@@ -412,8 +412,6 @@ save['.lua'] = function (name)
 	local file = fileCreate (name..'.lua')
 	local mTable = {}
 	
-	mTable[#mTable+1] = 'function startMap()'
-	
 	for iA,vA in pairs(getMapElements()) do
 		setElementData(vA,'MapEditor',false)
 		local eType = getElementType(vA)
@@ -451,16 +449,16 @@ save['.lua'] = function (name)
 		for i,v in pairs(getAllElementData(vA)) do
 			if (not properties[eType][i]) and (not properties.generic[i]) and (not ignore[i]) then
 				if type(v) == 'string' then
-				mTable[#mTable+1] = "\nsetElementData(element,'"..i.."','"..v.."')"
+					mTable[#mTable+1] = "\n	setElementData(element,'"..i.."','"..v.."')"
 				else
-				mTable[#mTable+1] = "\nsetElementData(element,'"..i.."',"..v..')'
+					if v then
+						mTable[#mTable+1] = "\n	setElementData(element,'"..i.."',"..v..')'
+					end
 				end
 			end
 		end
 		setElementData(vA,'MapEditor',true)
 	end
-	
-	mTable[#mTable+1] = '\nend\nstartMap()\n'
 
 	fileWrite(file,table.concat(mTable,''))
 	fileClose(file)
@@ -475,7 +473,7 @@ save['.JSP'] = function (name)
 			setElementData(v,'MapEditor',false)
 			local x,y,z = getElementPosition(v)
 			local xr,yr,zr = getElementRotation(v)
-			local model = getElementData(v,'id')
+			local model = getElementData(v,'id') or getElementID(v)
 			local dimension = getElementDimension(v)
 			local interior = getElementInterior(v)
 			mTable[#mTable+1] = '\n'..model..','..interior..','..dimension..','..x..','..y..','..z..','..xr..','..yr..','..zr

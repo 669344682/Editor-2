@@ -603,7 +603,7 @@ guiTypes['List'] = function (wStart,hStart,name,iTable,side,subtract,indexing,gT
 	end
 	
 	if global.open[name] then
-		for i,v in pairs(iTable) do
+		for i,v in pairs(iTable or {}) do
 
 			buttons[side].index = buttons[side].index + 1
 			global.scroll = global.scroll + 1
@@ -667,7 +667,9 @@ guiTypes['Map'] = function (wStart,hStart,name,iTable,side,subtract,indexing,gTa
 		end
 	end
 	
+	local iTable = buttons.right.menu['Load'].lists[name]
 	if global.open[name] then
+	
 		for i,v in pairs(iTable or {}) do
 
 			buttons[side].index = buttons[side].index + 1
@@ -726,7 +728,7 @@ end
 guiTypes['Color'] = function (wStart,hStart,name,iTable,side,subtract,indexing,gTable)
 
 if mapSetting.menuSettings[name] then
-	r,g,b = hex2RGB(mapSetting.menuSettings[name])
+	r,g,b = hex2rgb(mapSetting.menuSettings[name])
 end
 
 rC,gC,bC = unpack(iTable)

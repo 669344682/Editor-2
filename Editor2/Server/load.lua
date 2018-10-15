@@ -11,19 +11,21 @@ functions.proccessMetac = function (resource) --- Need to send settings over fro
 		local metachildren = {}
 		if meta then
 			local settings = xmlFindChild ( meta, "settings",0 )
-			local children = xmlNodeGetChildren(settings)
+			if settings then
+				local children = xmlNodeGetChildren(settings)
+					
+				for ia,va in pairs(children) do
+					local information = xmlNodeGetAttributes(va)
+					local name = information.name
+					local name = string.gsub (name, '#', '')
+					local setting = information.value
+					table.insert(metachildren,{name,setting})
+				end	
 				
-			for ia,va in pairs(children) do
-				local information = xmlNodeGetAttributes(va)
-				local name = information.name
-				local name = string.gsub (name, '#', '')
-				local setting = information.value
-				table.insert(metachildren,{name,setting})
-			end	
-			
-			
-			xmlUnloadFile(meta)
-			return metachildren
+				
+				xmlUnloadFile(meta)
+				return metachildren
+			end
 		end
 	end
 end
@@ -39,7 +41,8 @@ function functions.loadMapFile(file,extension,resource)
 		local loaded = fileOpen(file)
 		local content = fileRead ( loaded,fileGetSize(loaded) )
 		fileClose(loaded)
-		pcall(content)
+		local stuff = loadstring('return '..content) or loadstring(content)
+		pcall(stuff)
 	elseif extension == 'map' then
 		local loaded = xmlLoadFile (file)
 		loadMapData (loaded,resourceRoot)  
