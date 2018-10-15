@@ -112,6 +112,7 @@ binds = {static = {},dynamic = {},layout = {},check = {}}
 buttons = {left = {},right = {}}
 functions = {draw = {}}
 global = {count = {},open = {},scroll = 0,scrollRight = 0,scrollT = nil,countaddition = 0,Checked = {}}
+mapSetting = {menuSettings = {},AlreadyDefault = {}}
 magnets = {}
 mClose = {}
 cSides = {xr=1,yr=2,zr=3}
@@ -927,9 +928,3 @@ end
 
 --\\ Math Functions //---
 --------------------------
-
-
-
-
-
-

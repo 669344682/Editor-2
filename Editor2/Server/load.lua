@@ -2,7 +2,37 @@
 
 ObjectList = {}
 
+
+
+functions.proccessMetac = function (resource) --- Need to send settings over from client side, aswell as regenerate the files.
+	local xml = fileExists(':'..resource..'/meta.xml')
+	if xml then
+		local meta = xmlLoadFile (':'..resource..'/meta.xml')
+		local metachildren = {}
+		if meta then
+			local settings = xmlFindChild ( meta, "settings",0 )
+			local children = xmlNodeGetChildren(settings)
+				
+			for ia,va in pairs(children) do
+				local information = xmlNodeGetAttributes(va)
+				local name = information.name
+				local name = string.gsub (name, '#', '')
+				local setting = information.value
+				table.insert(metachildren,{name,setting})
+			end	
+			
+			
+			xmlUnloadFile(meta)
+			return metachildren
+		end
+	end
+end
+
+
+
+
 function functions.loadMapFile(file,extension,resource)
+	local settings = functions.proccessMetac(resource) or {}
 	print('Loading',file)
 	print('Type','.'..extension)
 	if extension == 'lua' then
@@ -36,6 +66,14 @@ function functions.loadMapFile(file,extension,resource)
 		end
 	end
 	print('Loaded',file)
+	
+	local fileName = resource
+	local author = getResourceInfo ( getResourceFromName(resource),'author')
+	local name = getResourceInfo ( getResourceFromName(resource),'name')
+	local description = getResourceInfo ( getResourceFromName(resource),'description')
+	local version =  getResourceInfo ( getResourceFromName(resource),'version')
+	local gamemodes = split(getResourceInfo ( getResourceFromName(resource),'gamemodes'),',')
+	callC(root,'fetchMediaInformation',author,name,description,version,gamemodes,settings)
 end
 
 

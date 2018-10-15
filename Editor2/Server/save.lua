@@ -20,6 +20,9 @@ save = {}
 properties = {}
 properties.generic = {}
 
+ordering = {}
+ordering.generic = {}
+
 function rgb2hex(r,g,b)
 	
 	local hex_table = {[10] = 'A',[11] = 'B',[12] = 'C',[13] = 'D',[14] = 'E',[15] = 'F'}
@@ -41,46 +44,55 @@ function rgb2hex(r,g,b)
 	return "#" .. r1 .. r2 .. g1 .. g2 .. b1 .. b2
 end
 
+table.insert(ordering.generic,'id')
 properties.generic['id'] = function(element)
 	local id = getElementID(element)
 	return id,'setElementID',nil,'setElementID(element,"'..id..'")'
 end
 
+table.insert(ordering.generic,'model')
 properties.generic['model'] = function(element) -- Technically this is not generic to everything, however it's represented on enough of them I'll figure out something, maybe don't add it if this returns nil?
 	local model = getElementModel(element)
 	return model
 end
 
+table.insert(ordering.generic,'posX')
 properties.generic['posX'] = function(element)
 	local x = getElementPosition(element)
 	return x
 end
 
+table.insert(ordering.generic,'posY')
 properties.generic['posY'] = function(element)
 	local _,y = getElementPosition(element)
 	return y
 end
 
+table.insert(ordering.generic,'posZ')
 properties.generic['posZ'] = function(element)
 	local _,_,z = getElementPosition(element)
 	return z
 end
 
+table.insert(ordering.generic,'rotX')
 properties.generic['rotX'] = function(element)
 	local xr = getElementRotation(element)
 	return xr
 end
 
+table.insert(ordering.generic,'rotY')
 properties.generic['rotY'] = function(element)
 	local _,yr = getElementRotation(element)
 	return yr
 end
 
+table.insert(ordering.generic,'rotZ')
 properties.generic['rotZ'] = function(element)
 	local _,_,zr = getElementRotation(element)
 	return zr
 end
 
+table.insert(ordering.generic,'interior')
 properties.generic['interior'] = function(element)
 	local interior = getElementInterior(element)
 	if interior > 0 then
@@ -90,6 +102,7 @@ properties.generic['interior'] = function(element)
 	end
 end
 
+table.insert(ordering.generic,'dimension')
 properties.generic['dimension'] = function(element)
 	local dimension = getElementDimension(element)
 	if dimension > 0 then
@@ -99,6 +112,7 @@ properties.generic['dimension'] = function(element)
 	end
 end
 
+table.insert(ordering.generic,'collisions')
 properties.generic['collisions'] = function(element)
 	local collisions = getElementCollisionsEnabled(element)
 	if collisions == false then
@@ -108,6 +122,7 @@ properties.generic['collisions'] = function(element)
 	end
 end
 
+table.insert(ordering.generic,'alpha')
 properties.generic['alpha'] = function(element)
 	local alpha = getElementAlpha(element)
 	if alpha < 255 then
@@ -117,6 +132,7 @@ properties.generic['alpha'] = function(element)
 	end
 end
 
+table.insert(ordering.generic,'frozen')
 properties.generic['frozen'] = function(element)
 	local frozen = isElementFrozen(element)
 	if frozen == false then
@@ -127,7 +143,9 @@ properties.generic['frozen'] = function(element)
 end
 
 properties.object = {}
+ordering.object = {}
 
+table.insert(ordering.object,'scale')
 properties.object['scale'] = function(element)
 	local x,y,z = getObjectScale(element)
 	if not(x == 1) or not(y == 1) or not(y == 1) then
@@ -138,13 +156,16 @@ properties.object['scale'] = function(element)
 end
 
 properties.vehicle = {}
+ordering.vehicle = {}
 
+table.insert(ordering.vehicle,'color')
 properties.vehicle['color'] = function(element)
 	local vc = {getVehicleColor(element, true)}
 	local colorString = vc[1]..","..vc[2]..","..vc[3]..","..vc[4]..","..vc[5]..","..vc[6]..","..vc[7]..","..vc[8]..","..vc[9]..","..vc[10]..","..vc[11]..","..vc[12]
 	return colorString,'setVehicleColor'
 end
 
+table.insert(ordering.vehicle,'upgrades')
 properties.vehicle['upgrades'] = function(element)
 	local upgrades = getVehicleUpgrades ( element)
 	
@@ -152,33 +173,40 @@ properties.vehicle['upgrades'] = function(element)
 	return upgrades,'',true,'for i,v in pairs({'..table.concat(upgrades,',')..'}) do\naddVehicleUpgrade ( element, v )\nend'
 end
 
+table.insert(ordering.vehicle,'paintjob')
 properties.vehicle['paintjob'] = function(element)
 	local paintjob = getVehiclePaintjob(element)
 	return paintjob,'setVehiclePaintjob'
 end
 
+table.insert(ordering.vehicle,'plate')
 properties.vehicle['plate'] = function(element)
 	local text = getVehiclePlateText(element)
 	return text,'setVehiclePlateText'
 end
 
+table.insert(ordering.vehicle,'health')
 properties.vehicle['health'] = function(element)
 	local health = getElementHealth(element)
 	return health,'setElementHealth'
 end
 
+table.insert(ordering.vehicle,'sirens')
 properties.vehicle['sirens'] = function(element)
 	local sirens = getVehicleSirensOn (element)
 	return sirens,'setVehicleSirensOn'
 end
 
+table.insert(ordering.vehicle,'locked')
 properties.vehicle['locked'] = function(element)
 	local locked = isVehicleLocked (element)
 	return locked,'setVehicleLocked'
 end
 
 properties.pickup = {}
+ordering.pickup = {}
 
+table.insert(ordering.pickup,'eType')
 properties.pickup['eType'] = function (element)
 	local eType =  getPickupType (element)
 	if eType == 0 then
@@ -192,6 +220,7 @@ properties.pickup['eType'] = function (element)
 	end
 end
 
+table.insert(ordering.pickup,'amount')
 properties.pickup['amount'] = function (element)
 	local eType =  getPickupType (element)
 	if eType == 0 or eType == 1 or eType == 3 then
@@ -201,31 +230,38 @@ properties.pickup['amount'] = function (element)
 	end
 end
 
+table.insert(ordering.pickup,'respawn')
 properties.pickup['respawn'] = function (element)
 	return getPickupRespawnInterval(element)
 end
 
 properties.marker = {}
+ordering.marker = {}
 
+table.insert(ordering.marker,'eType')
 properties.marker['eType'] = function (element)
 	return getMarkerType ( element )
 end
 
+table.insert(ordering.marker,'color')
 properties.marker['color'] = function (element)
 	local r,g,b = getMarkerColor ( element )
 	return rgb2hex(r,g,b)
 end
 
 properties.blip = {}
+ordering.blip = {}
 
+table.insert(ordering.blip,'color')
 properties.blip['color'] = function (element)
 	local r,g,b = getBlipColor ( element )
 	return rgb2hex(r,g,b)
 end
 
+table.insert(ordering.blip,'ordering')
 properties.blip['ordering'] = function (element)
-	local ordering = getBlipOrdering ( element )
-	return ordering
+	local orderingb = getBlipOrdering ( element )
+	return orderingb
 end
 
 ignore = {}
@@ -265,7 +301,9 @@ save['.map'] = function (name)
 		
 		local eType = getElementType(vA)
 		mTable[#mTable+1] = '\n <'..eType
-		for i,v in pairs(properties.generic) do
+		for _,vC in pairs(ordering.generic) do
+			local i = vC
+			local v = properties.generic[i]
 			local a,b,c = v(vA)
 			if a then
 				if c then
@@ -275,7 +313,9 @@ save['.map'] = function (name)
 				end
 			end
 		end
-		for i,v in pairs(properties[eType]) do
+		for _,vC in pairs(ordering[eType]) do
+			local i = vC
+			local v = properties[eType][i]
 			local a,b,c = v(vA)
 			if c then
 				mTable[#mTable+1] = ' '..i..'="'..table.concat(a,',')..'"'
@@ -356,10 +396,10 @@ create.blip = function(element)
 	local x,y,z = getElementPosition(element)
 	local icon = getBlipIcon ( element )
 	local size = getBlipSize (element)
-	local ordering = getBlipOrdering (element)
+	local orderingc = getBlipOrdering (element)
 	local visible = getBlipVisibleDistance (element)
 	local r,g,b,a = getMarkerColor ( element )
-	return 'createBlip('..x..','..y..','..z..','..icon..','..size..','..r..','..g..','..b..','..a..','..ordering..','..visible..')'
+	return 'createBlip('..x..','..y..','..z..','..icon..','..size..','..r..','..g..','..b..','..a..','..orderingc..','..visible..')'
 end
 
 create.misc = function (element)
@@ -384,7 +424,9 @@ save['.lua'] = function (name)
 			mTable[#mTable+1] = '\n	local element = '..create.misc(vA)
 		end
 		
-		for i,v in pairs(properties.generic) do
+		for _,vC in pairs(ordering.generic) do
+			local i = vC
+			local v = properties.generic[i]
 			local a,b,c,d = v(vA)
 			if a and b then
 				if c then
@@ -394,7 +436,9 @@ save['.lua'] = function (name)
 				end
 			end
 		end
-		for i,v in pairs(properties[eType]) do
+		for _,vC in pairs(ordering[eType]) do
+			local i = vC
+			local v = properties[eType][i]
 			local a,b,c,d = v(vA)
 			if b then
 				if c then
@@ -442,11 +486,68 @@ save['.JSP'] = function (name)
 	fileClose(file)
 end
 
-function functions.save(format,name)
+function functions.save(format,name,settingTable,mName,author,version,description,gamemodes)
 	local map = getResourceFromName ( name ) or createResource ( name )
 	if map then
 		if save[format] then
-			save[format](':'..name..'/'..name)
+			save[format](':'..name..'/gta3')
 		end
+		functions.proccessMeta(name,'gta3'..format,settingTable,mName,author,version,description,gamemodes)
 	end
 end
+
+functions.proccessMeta = function (name,mapfile,settings,mName,author,version,description,gamemodes) --- Need to send settings over from client side, aswell as regenerate the files.
+	local xml = fileExists(':'..name..'/meta.xml')
+	if xml then
+		local meta = xmlLoadFile (':'..name..'/meta.xml')
+		metachildren = {}
+		if meta then
+			local children = xmlNodeGetChildren(meta)
+			local metatable = {addmap = true}
+			for ia,va in pairs(children or {}) do
+				local type = xmlNodeGetName (va)
+				if not (type == 'info') then -- We wanna get rid of the old information, meta will be populated with the new information instead.
+					local information = xmlNodeGetAttributes(va)
+					if information.src == mapfile then
+						metatable.addmap = nil --// If the map file already exists in the meta there's no reason to add it again.
+					else
+						table.insert(metachildren,{type,information.src})
+					end
+				end
+			end		
+			xmlUnloadFile(meta)
+		end
+	end
+	functions.generateMeta(metachildren,settings,mName,author,version,description,mapfile,gamemodes,name)--(stuff) // Need to send information from client. // Pretty much generates the 'Meta' from scratch resulting in fixed formatting.
+end
+
+functions.generateMeta = function (children,settings,name,author,version,description,mapfile,gamemodes,mName)
+	local list = {}
+	local meta = fileCreate (':'..mName..'/meta.xml')
+	fileWrite(meta,'<meta>')
+	fileWrite(meta,'\n<info type="map" gamemodes="'..gamemodes..'" name="'..name..'" author="'..author..'" description="'..description..'" version="'..version..'" />')
+	fileWrite(meta,'\n  <map src="'..mapfile..'" />') 
+	if #settings > 0 then
+		fileWrite(meta,'\n	<settings>')
+		for i,v in pairs(settings) do
+			if v then
+				if v[1] and v[2] then
+					fileWrite(meta,'\n		<setting name="#'..v[1]..'" value="'..v[2]..'" />')
+				end
+			end
+		end
+		fileWrite(meta,'\n	</settings>')
+	end
+	for i,v in pairs(children or {}) do
+		if v[1] and v[2] then
+			fileWrite(meta,'\n  <'..v[1]..' src="'..v[2]..'" />') 
+		end
+	end
+	fileWrite(meta,'\n</meta>')
+	
+    fileClose(meta) 
+end
+
+
+
+
