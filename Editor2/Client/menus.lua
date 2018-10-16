@@ -136,7 +136,7 @@ end
 
 table.insert(buttons.left.menu,{'Depth','Option',{10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200}}) -- Might move this to a range maybe?
 functions['Depth'] = function (input,index)
-	selectionDepth = index*10 --// This is the depth of the tool. If set to 10 it'll only scan 10 units in front of you for elements.
+	global.SelectionDepth = index*10 --// This is the depth of the tool. If set to 10 it'll only scan 10 units in front of you for elements.
 end
 functions['Depth'](nil,5)
 global.count['Depth'] = 5 
@@ -650,6 +650,36 @@ guiTypes['Object'] = function (wStart,hStart,name,iTable,side,subtract,indexing,
 	end
 end
 
+guiTypes['Vehicle'] = function (wStart,hStart,name,iTable,side,subtract,indexing,gTable,spacing,tabl)
+	if (buttons[side].index-indexing) > 0 and (buttons[side].index-indexing) < 15 then
+		local image = functions.prepImage('Vehicle')
+		dxDrawText(tabl[1], (wStart+25)*s, hStart*s, (wStart+239)*s, (hStart+24)*s, tocolor(255, 255, 255, 255), 1.00*s, "default-bold", "left", "center", false, false, true, false, false)
+		
+		local hover = functions.isCursorOnElement((wStart+2)*s,hStart*s, 150*s, 24*s,'Vehicle',tabl)
+		
+		if hover then
+			oSelect = name
+		end
+		
+		dxDrawImage((wStart+2)*s,(hStart)*s, 20*s,20*s,image, 0, 0, 0, tocolor(255, 255, 255, hover and 150 or 230), true)	
+	end
+end
+
+guiTypes['EDF'] = function (wStart,hStart,name,iTable,side,subtract,indexing,gTable,spacing,tabl)
+	if (buttons[side].index-indexing) > 0 and (buttons[side].index-indexing) < 15 then
+		local image = functions.prepImage(tabl[1],nil,true)
+		dxDrawText(tabl[4], (wStart+25)*s, hStart*s, (wStart+239)*s, (hStart+24)*s, tocolor(255, 255, 255, 255), 1.00*s, "default-bold", "left", "center", false, false, true, false, false)
+		
+		local hover = functions.isCursorOnElement((wStart+2)*s,hStart*s, 150*s, 24*s,'EDF',tabl)
+		
+		if hover then
+			oSelect = name
+		end
+		
+		dxDrawImage((wStart+2)*s,(hStart)*s, 20*s,20*s,image, 0, 0, 0, tocolor(255, 255, 255, hover and 150 or 230), true)	
+	end
+end
+
 
 
 guiTypes['Map'] = function (wStart,hStart,name,iTable,side,subtract,indexing,gTable,spacing,tabl)--rStart,start,buttons.right.reverseIndent
@@ -715,8 +745,18 @@ end
 
 
 functions['Object'] = function (tabl)
-	local x,y,z = getWorldFromScreenPosition (xSize/2, ySize/2,(selectionDepth or 40)/2)
+	local x,y,z = getWorldFromScreenPosition (xSize/2, ySize/2,(global.SelectionDepth or 40)/2)
 	callS('ObjectS',selectedElements,tabl[5],getKeyState('lctrl'),x,y,z)
+end
+
+functions['EDF'] = function (tabl) -- TODO
+	local x,y,z = getWorldFromScreenPosition (xSize/2, ySize/2,(global.SelectionDepth or 40)/2)
+	callS('edfS',selectedElements,tabl[1],getKeyState('lctrl'),x,y,z)
+end
+
+functions['Vehicle'] = function (tabl)
+	local x,y,z = getWorldFromScreenPosition (xSize/2, ySize/2,(global.SelectionDepth or 40)/2)
+	callS('VehicleS',selectedElements,tabl[4],getKeyState('lctrl'),x,y,z)
 end
 
 
@@ -735,13 +775,13 @@ rC,gC,bC = unpack(iTable)
 
 local rC = r or rC
 local gC = g or gC
-local gC = g or gC
+local bC = b or bC
 
 local hover = functions.isCursorOnElement((wStart+120)*s,hStart*s, (85-(subtract or 0))*s, 24*s,'Color',name,rC,gC,bC)
 local alpha = hover and 150 or 255
 
-if colorpicker.Open then
-rC,gC,bC = unpack(colorpicker.colorbar)
+if colorpicker[name] then
+	rC,gC,bC = unpack(colorpicker[name].colorbar)
 end
 
 dxDrawRectangle((wStart+120)*s,hStart*s, (85-(subtract or 0))*s, 24*s, tocolor(rC,gC,bC, alpha), true)
@@ -752,12 +792,21 @@ mapSetting.menuSettings[name] = rgb2hex(rC,gC,bC)
 end
 
 functions['Color'] = function(name,r,g,b)
-	local ra,ga,ba,wB,hB = unpack(colorpicker.colorbar)
-	colorpicker.colorbar = {r,g,b,wB,hB,rgb2hex(r,g,b)}
-	colorpicker.Open = true
-	colorpicker.Arrow = true
+	local ra,ga,ba,wB,hB = unpack(((colorpicker[name] or {}).colorbar or {}))
+	colorpicker[name] = colorpicker[name] or {Arrow = true}
+	colorpicker[name].colorbar = {ra or r,ga or g,ba or b,wB,hB,rgb2hex(r,g,b)}
+	
+	if (colorpicker.Open == name) then
+		colorpicker.Open = nil
+	else
+		colorpicker.Open = name
+	end
+	
+	colorpicker[name].color = {ra or r,ga or g,ba or b,nil}
+
 end
 
+addEvent ( "Color", true )
 
 guiTypes['Material'] = function ()
 
@@ -778,6 +827,10 @@ guiTypes['Text'] = function (wStart,hStart,name,iTable,side,subtract,indexing)
 	return edit
 end
 
+--[[
+addEvent ( "Text", true )
+triggerEvent ('Text', resourceRoot,name,Text[name])
+]]--
 
 functions['Text'] = function(name,iTable)
 	Text[name] = iTable
@@ -851,7 +904,8 @@ guiTypes['Check box'] = function (wStart,hStart,name,iTable,side,subtract,indexi
 	dxDrawText( name, (wStart+20)*s, hStart*s, (wStart+239)*s, (hStart+24)*s, tocolor(255, 255, 255, 255), 1.00*s, "default-bold", "left", "center", false, false, true, false, false)
 end
 
-
+addEvent ( "Check box", true )
 functions['Check box'] = function (name)
 	global.Checked[name] = (global.Checked[name] == 1) and 2 or 1
+	triggerEvent ('Check box', resourceRoot,name,global.Checked[name])    
 end

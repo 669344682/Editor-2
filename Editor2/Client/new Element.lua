@@ -32,6 +32,9 @@ buttons.right.menu['New Element'].lists['San Andreas Objects'] = {}
 table.insert(buttons.right.menu['New Element'],{'Water','List'})
 buttons.right.menu['New Element'].lists['Water'] = {}
 
+table.insert(buttons.right.menu['New Element'],{'EDF','List'})
+buttons.right.menu['New Element'].lists['EDF'] = {}
+
 table.insert(buttons.right.menu['New Element'],{'FX','List'})
 buttons.right.menu['New Element'].lists['FX'] = {}
 

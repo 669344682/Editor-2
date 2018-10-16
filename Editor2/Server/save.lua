@@ -149,9 +149,19 @@ table.insert(ordering.object,'scale')
 properties.object['scale'] = function(element)
 	local x,y,z = getObjectScale(element)
 	if not(x == 1) or not(y == 1) or not(y == 1) then
-		return {x,y,z},'setElementScale',true
+		return {x,y,z},'setObjectScale',true
 	else
 		return {x,y,z},nil,true
+	end
+end
+
+table.insert(ordering.object,'breakable')
+properties.object['breakable'] = function(element)
+	local breakable = isObjectBreakable(element)
+	if breakable == false then
+		return breakable,'setObjectBreakable'
+	else
+		return breakable
 	end
 end
 
@@ -299,7 +309,7 @@ save['.map'] = function (name)
 	for iA,vA in pairs(getMapElements()) do
 		setElementData(vA,'MapEditor',false)
 		
-		local eType = getElementType(vA)
+		local eType = (getElementData(v,'Edf') and 'EDF') or getElementType(vA)
 		mTable[#mTable+1] = '\n <'..eType
 		for _,vC in pairs(ordering.generic) do
 			local i = vC
@@ -414,7 +424,7 @@ save['.lua'] = function (name)
 	
 	for iA,vA in pairs(getMapElements()) do
 		setElementData(vA,'MapEditor',false)
-		local eType = getElementType(vA)
+		local eType = (getElementData(v,'Edf') and 'EDF') or getElementType(vA)
 		
 		if create[eType] then
 			mTable[#mTable+1] = '\n	local element = '..create[eType](vA)
@@ -469,15 +479,17 @@ save['.JSP'] = function (name)
 	mTable = {}
 	mTable[#mTable+1] = '0,0,0'
 	for i,v in pairs(getElementsByType('object')) do
-		if getElementData(v,'MapEditor') then
-			setElementData(v,'MapEditor',false)
-			local x,y,z = getElementPosition(v)
-			local xr,yr,zr = getElementRotation(v)
-			local model = getElementData(v,'id') or getElementID(v)
-			local dimension = getElementDimension(v)
-			local interior = getElementInterior(v)
-			mTable[#mTable+1] = '\n'..model..','..interior..','..dimension..','..x..','..y..','..z..','..xr..','..yr..','..zr
-			setElementData(v,'MapEditor',true)
+		if not getElementData(v,'Edf') then
+			if getElementData(v,'MapEditor') then
+				setElementData(v,'MapEditor',false)
+				local x,y,z = getElementPosition(v)
+				local xr,yr,zr = getElementRotation(v)
+				local model = getElementData(v,'id') or getElementID(v)
+				local dimension = getElementDimension(v)
+				local interior = getElementInterior(v)
+				mTable[#mTable+1] = '\n'..model..','..interior..','..dimension..','..x..','..y..','..z..','..xr..','..yr..','..zr
+				setElementData(v,'MapEditor',true)
+			end
 		end
 	end
 	fileWrite(file,table.concat(mTable,''))

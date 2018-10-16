@@ -11,13 +11,36 @@ end
 )
 
 function functions.DrawGimbal()
-	if isThereSelected() then
+	
 		local center = xSize/2
 		local cposition = center-((100*s)/2)
 		local lposition = cposition-(105*s)
 		local rposition = cposition+(105*s)
 		
 		local yposition = ySize-(82*s)
+		
+		local Gelement = getHighLightedElement() or sElement
+		sElement = nil
+		if isElement(Gelement) then
+			local eType = getElementType(Gelement)
+			local center = (lposition+rposition+(100*s))/2
+			if getElementData(Gelement,'Edf') then
+				dxDrawText ( tostring(getElementData(Gelement,'Edf'))..':'..(getElementData(Gelement,'mID') or ''),lposition, yposition-(30*s), rposition+(100*s), yposition, tocolor ( 255, 255, 255, 150	), 1.02, "arial",'center','center'	 )
+				dxDrawImage(center-((80+30)*s),yposition-(30*s), 30*s, 30*s,functions.prepImage(getElementData(Gelement,'Edf'),nil,true), 0, 0, 0, tocolor(255, 255, 255, 150), true)
+				dxDrawImage(center+(80*s),yposition-(30*s), 30*s, 30*s,functions.prepImage(getElementData(Gelement,'Edf'),nil,true), 0, 0, 0, tocolor(255, 255, 255, 150), true)
+			elseif eType == 'object' then
+				dxDrawText ( tostring(getElementID(Gelement))..':'..(getElementData(Gelement,'mID') or ''),lposition, yposition-(30*s), rposition+(100*s), yposition, tocolor ( 255, 255, 255, 150	), 1.02, "arial",'center','center'	 )
+				dxDrawImage(center-((80+30)*s),yposition-(30*s), 30*s, 30*s,functions.prepImage('Object'), 0, 0, 0, tocolor(255, 255, 255, 150), true)
+				dxDrawImage(center+(80*s),yposition-(30*s), 30*s, 30*s,functions.prepImage('Object'), 0, 0, 0, tocolor(255, 255, 255, 150), true)
+			elseif eType == 'vehicle' then
+				dxDrawText ( tostring(getVehicleNameFromModel(getElementModel(Gelement)))..':'..(getElementData(Gelement,'mID') or ''),lposition, yposition-(30*s), rposition+(100*s), yposition, tocolor ( 255, 255, 255, 150	), 1.02, "arial",'center','center'	 )
+				dxDrawImage(center-((80+30)*s),yposition-(30*s), 30*s, 30*s,functions.prepImage('Vehicle'), 0, 0, 0, tocolor(255, 255, 255, 150), true)
+				dxDrawImage(center+(80*s),yposition-(30*s), 30*s, 30*s,functions.prepImage('Vehicle'), 0, 0, 0, tocolor(255, 255, 255, 150), true)
+			end
+		end
+		
+		if isThereSelected() then
+		
 		dxDrawText ( 'Position',lposition-(60*s), yposition, lposition, yposition+(30*s), tocolor ( 255, 255, 255, 150	), 1.02, "arial",'center','center'	 )
 		X,Y,Z = getSelectedElementsCenterI()
 		dxDrawEditBox(lposition,yposition, 100*s, 30*s,1.3*s,'arial',tocolor(255, 100, 100, 255),'x',math.floor(X*100)/100,true,tocolor(0, 0, 0, 200),{255, 100, 100},true) 
@@ -34,7 +57,7 @@ function functions.DrawGimbal()
 		end
 		
 		if freeMove then
-			dxDrawText ( 'Free Move Enabled',lposition, yposition-(60*s), rposition+(100*s), yposition-(30*s), tocolor ( 255, 0, 0, 150	), 1.02, "arial",'center','center'	 )
+			dxDrawText ( 'Free Move Enabled',lposition, yposition-(80*s), rposition+(100*s), yposition-(50*s), tocolor ( 255, 0, 0, 150	), 1.02, "arial",'center','center'	 )
 		end
 	end
 	

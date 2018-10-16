@@ -9,7 +9,9 @@ end
 functions['ObjectS'] = function (selectedElements,id,replaceE,x,y,z)
 	if replaceE then
 		for i,v in pairs(selectedElements) do
-			exports.ObjS:JsetElementModel(i,id)
+			if getElementType(v) == 'object' then
+				exports.ObjS:JsetElementModel(i,id)
+			end
 		end
 	else
 		local obj = exports.ObjS:JcreateObject(id,x,y,z)
@@ -19,6 +21,49 @@ functions['ObjectS'] = function (selectedElements,id,replaceE,x,y,z)
 		callC(client,'Select',obj)
 	end
 end
+
+functions['edfS'] = function (selectedElements,type,replaceE,x,y,z)
+	if replaceE then
+		for i,v in pairs(selectedElements) do
+			if getElementData(i,'Edf') then
+				exports.ObjS:JsetElementModel(i,2995)
+				setElementData(i,'Edf',type)
+			end
+		end
+	else
+		
+		local obj = exports.ObjS:JcreateObject(2995,x,y,z)
+		
+		setElementData(obj,'MapEditor',true)
+		setElementData(obj,'mID',generateElementSerial())
+		setElementData(obj,'Edf',type)
+		table.insert(objects,obj)
+		callC(client,'Select',obj)
+	end
+end
+
+
+
+
+
+functions['VehicleS'] = function (selectedElements,id,replaceE,x,y,z)
+	if replaceE then
+		for i,v in pairs(selectedElements) do
+			if getElementType(v) == 'vehicle' then
+				setElementModel(v,id)
+			end
+		end
+	else
+		local obj = createVehicle(id,x,y,z)
+		setElementData(obj,'MapEditor',true)
+		setElementData(obj,'mID',generateElementSerial())
+		callC(client,'Select',obj)
+	end
+end
+
+
+
+
 
 used = {}
 
@@ -83,13 +128,13 @@ function cloneElement ( element, x, y, z, children )
 		end
 	end
 	setElementID(newElement,id)
-	setElementData(newElement,'mID',generateElementSerial())
 	setElementPosition(newElement,x,y,z)
 	setElementRotation(newElement,xr,yr,zr)
 	setElementData(newElement,'MapEditor',true)
 	for i,v in pairs(data) do
 		setElementData(newElement,i,v)
 	end
+	setElementData(newElement,'mID',generateElementSerial())
 end
 
 functions['DeleteElements'] = function (selectedElements)
@@ -237,7 +282,6 @@ function ( )
 	end
 end
 )
-
 
 functions['getGamemodes'] = function ()
 local ta = {}

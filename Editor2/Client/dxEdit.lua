@@ -99,6 +99,9 @@ end
 
 
 
+addEvent ( "Text", true )
+--triggerEvent ('Text', resourceRoot,name,Text[name])
+
 
 function dxEdit(button,real)
 	if EditSelected then

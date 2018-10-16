@@ -167,10 +167,12 @@ rewrite[' / '] = 'slash' -- Have to use spaces because 'Slash' doesn't like this
 --// Image Functions \\--
 images = {}
 
-function functions.prepImage(path,mip)
+function functions.prepImage(path,mip,edf)
 	if path then
-		local path = 'images/'..path..'.png'
+		local path = edf and 'EDFImages/'..path..'.png' or 'images/'..path..'.png'
 
+
+		
 		if (not images[path]) and fileExists(path) then
 			images[path] = {}
 			local img = fileOpen(path)
@@ -316,11 +318,11 @@ end
 
 
 function getIntersectingElement(xa,ya,za,xb,yb,zb)
-	rMinimal = (selectionDepth or 5)
+	rMinimal = (global.SelectionDepth or 5)
 	rElement = nil
 	for i,v in pairs(getAllElements(true,true)) do
 	local x,y,z = getElementPosition(v)
-		if getDistanceBetweenPoints3D(x,y,z,xa,ya,za) <= (selectionDepth or 5) then
+		if getDistanceBetweenPoints3D(x,y,z,xa,ya,za) <= (global.SelectionDepth or 5) then
 			local scale = 1
 			if getElementType(v) == 'object' then
 			local sX,sY,sZ = getObjectScale(v)
@@ -345,7 +347,7 @@ function getHighLightedElement()
 			x,y = xa,ya
 		end
 		local xA,yA,zA = getCameraMatrix()
-		local xW,yW,zW = getWorldFromScreenPosition (x,y, (selectionDepth or 5) )
+		local xW,yW,zW = getWorldFromScreenPosition (x,y, (global.SelectionDepth or 5) )
 		if getKeyState('lctrl') then
 			return getIntersectingElement(xA,yA,zA,xW,yW,zW)
 		else
@@ -368,6 +370,7 @@ function getSelectedElementsCenter()
 local maxV = nil
 local minV = nil
 	for i,v in pairs(selectedElements) do
+		sElement = i
 		local x,y,z = getElementPosition(i)
 		maxV = maxV or {x,y,z}
 		minV = minV or {x,y,z}
@@ -596,7 +599,7 @@ function isCursorOnWorldElement(element)
 		local x,y = getCursorPosition()
 		local xa,ya = x*xSize,y*ySize
 		local xA,yA,zA = getWorldFromScreenPosition (xa,ya, 0 )
-		local xB,yB,zB = getWorldFromScreenPosition (xa,ya, (selectionDepth or 5) )
+		local xB,yB,zB = getWorldFromScreenPosition (xa,ya, (global.SelectionDepth or 5) )
 		
 		if xA then
 			local hit, x, y, z, elementA = processLineOfSight (xA,yA,zA,xB,yB,zB,true,true,false,true,false,false,false,false)

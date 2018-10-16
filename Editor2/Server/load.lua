@@ -32,6 +32,43 @@ end
 
 
 
+functions.proccessEDF = function (resourcesA)
+	local edfTable = {}
+	local edfSettings = {}
+	for i,resource in pairs(resourcesA) do
+		local EDF = getResourceInfo(getResourceFromName(resource),'edf:definition')
+		if EDF then
+			local xml = fileExists(':'..resource..'/'..EDF)
+			if xml then
+				local meta = xmlLoadFile (':'..resource..'/'..EDF)
+				edfTable[resource] = {}
+
+				if meta then
+					local children = xmlNodeGetChildren(meta)
+					
+					for i,v in pairs(children) do
+						if xmlNodeGetName(v) == 'element' then
+							local a = xmlNodeGetAttributes(v)
+							local name = a.name
+							local fname = a.friendlyname
+							local iconc = ':'..resource..'/'..(a.icon or '')
+							edfSettings[name] = edfSettings[name] or {}
+							local settings = xmlNodeGetChildren(v)
+							table.insert(edfTable[resource],{name,fname,iconc})
+							for i,v in pairs(settings) do
+								table.insert(edfSettings[name],xmlNodeGetAttributes(v))
+							end
+						end
+					end
+					xmlUnloadFile(meta)
+				end
+			end
+		end
+	end
+	callC(root,'fetchEDFElements',edfTable)
+	callC(root,'prepEDFSettingStockPile',edfSettings)
+end
+
 
 function functions.loadMapFile(file,extension,resource)
 	local settings = functions.proccessMetac(resource) or {}
@@ -76,7 +113,7 @@ function functions.loadMapFile(file,extension,resource)
 	local description = getResourceInfo ( getResourceFromName(resource),'description')
 	local version =  getResourceInfo ( getResourceFromName(resource),'version')
 	local gamemodes = split(getResourceInfo ( getResourceFromName(resource),'gamemodes'),',')
-	callC(root,'fetchMediaInformation',author,name,description,version,gamemodes,settings)
+	callC(root,'fetchMetaInformation',author,name,description,version,gamemodes,settings)
 end
 
 

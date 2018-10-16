@@ -11,7 +11,12 @@ arrow = functions.prepImage('arrow')
 
 function functions.drawM()
 
-
+	for i,v in pairs(getElementsByType('object')) do
+		if getElementData(v,'Edf') then
+			local x,y,z = getElementPosition(v)
+			dxDrawMaterialLine3D(x,y,z+1.5,x,y,z+0.5,functions.prepImage(getElementData(v,'Edf'),nil,true),1,tocolor(255,255,255,200))
+		end
+	end
 
 	countb = countb + 0.5
 

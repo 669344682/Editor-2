@@ -2,7 +2,7 @@
 --{'Move Type','Option',{'World','Local','Screen'}})
 
 -- mapSetting is the per map setting list.
-functions.fetchMediaInformation = function (author,name,description,version,gamemodes,settings)
+functions.fetchMetaInformation = function (author,name,description,version,gamemodes,settings)
 
 	mapSetting.menuSettings['Author'] = author or ''
 	mapSetting.menuSettings['Map Name'] = name or ''
@@ -27,6 +27,22 @@ functions.fetchMediaInformation = function (author,name,description,version,game
 	end
 end
 
+gamemodeList = gamemodeList or {}
+
+functions.fetchEDFElements = function (edfResources)
+	buttons.right.menu['New Element'].lists['EDF'] = {}
+	gamemodeList = gamemodeList or {}
+	for i,v in pairs(edfResources) do
+		table.insert(buttons.right.menu['New Element'].lists['EDF'],{i,'List'})
+		buttons.right.menu['New Element'].lists[i] = {}
+		for iA,vA in pairs(v) do
+			table.insert(buttons.right.menu['New Element'].lists[i],{vA[1],'EDF',nil,vA[2],vA[3]})
+		end
+	end
+	setTimer ( callS, 2500, 1, 'proccessEDF',mapSetting.gameModes or {})
+end
+
+callS('proccessEDF',{})
 
 
 
@@ -52,7 +68,6 @@ callS('getGamemodes')
 setTimer ( callS, 2500, 0, "getGamemodes" )
 
 
-
 functions.refreshGamemods = function(list,edf)
 	
 	mapSetting.settings = {}
@@ -60,6 +75,7 @@ functions.refreshGamemods = function(list,edf)
 	local checky = {}
 	functions.resetMetaList()
 	gamemodeList = list
+
 	for i,v in pairs(list) do
 		global.Checked[v] = global.Checked[v] or nil
 		table.insert(buttons.right.menu['Settings'].lists['Gamemodes'],{v,'Check box'})

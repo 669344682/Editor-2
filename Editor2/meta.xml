@@ -54,7 +54,7 @@
 		<file src="Images/back.png" />
 		<file src="Images/map.png" />
 		<file src="Images/Rotation Type.png" />
-		
+		<file src="Images/Vehicle.png" />
 		
 		
 		
@@ -93,6 +93,25 @@
 		<file src="Lists/transportation.list" />
 		<file src="Lists/Wires and Cables.list" />	
 		
+		<file src="Lists/vehicleLists/Motorbikes.list" />
+		<file src="Lists/vehicleLists/Helicopters.list" />
+		<file src="Lists/vehicleLists/4-Door.list" />
+		<file src="Lists/vehicleLists/Emergency.list" />
+		<file src="Lists/vehicleLists/Planes, Jets and Airlines.list" />
+		<file src="Lists/vehicleLists/Trains.list" />
+		<file src="Lists/vehicleLists/Boats.list" />
+		<file src="Lists/vehicleLists/Lowriders.list" />
+		<file src="Lists/vehicleLists/Trailers.list" />
+		<file src="Lists/vehicleLists/SUVs and Wagons.list" />
+		<file src="Lists/vehicleLists/Industrial.list" />
+		<file src="Lists/vehicleLists/Other.list" />
+		<file src="Lists/vehicleLists/Trucks.list" />
+		<file src="Lists/vehicleLists/2-Door.list" />
+		<file src="Lists/vehicleLists/Bicycles.list" />
+		<file src="Lists/vehicleLists/Vans.list" />
+		<file src="Lists/vehicleLists/RC Vehicles.list" />
+		<file src="Lists/vehicleLists/Sports Cars.list" />
+		
 		<file src="Images/Movement.png" />
 		<file src="Images/Rotation.png" />
 		<file src="Images/Scale.png" />
@@ -108,6 +127,17 @@
 		<file src="Images/cursor.png" />
 		<file src="Images/cursor2.png" />
 		<file src="Images/close.png" />
+		
+		<file src="EDFImages/checkpoint.png" />
+		<file src="EDFImages/flag.png" />
+		<file src="EDFImages/mercenaryspawn.png" />
+		<file src="EDFImages/racepickup.png" />
+		<file src="EDFImages/spawnpoint.png" />
+		<file src="EDFImages/spyspawn.png" />
+		<file src="EDFImages/team.png" />
+		<file src="EDFImages/weapon.png" />
+		<file src="EDFImages/briefcase.png" />
+		<file src="EDFImages/objective.png" />
 		
 		
 		

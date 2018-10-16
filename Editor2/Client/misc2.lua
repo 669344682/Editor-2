@@ -81,14 +81,14 @@ functions.checkMagnets = function (element)
         local x,y,z = getElementPosition(element)
         local cx,cy,cz = getCameraMatrix()
         local sqrt = math.sqrt
-        if getDistanceBetweenPoints3D(x,y,z,cx,cy,cz) < (selectionDepth*2) then
+        if getDistanceBetweenPoints3D(x,y,z,cx,cy,cz) < (global.SelectionDepth*2) then
             for mElement,mMagnets in pairs(magnets) do
                 if (not selectedElements[mElement]) and isElement(mElement) and isElementOnScreen(mElement) then
                     local ex,ey,ez = getElementPosition(mElement)
 					local dist = (getDistanceBetweenPoints3D(x,y,z,ex,ey,ez) + getElementRadius(mElement))
 					if dist < minODistance then
 						minODistance = (math.max(dist,(getElementRadius(mElement)-1)))
-						if (getDistanceBetweenPoints3D(cx,cy,cz,ex,ey,ez) < (selectionDepth*2)) then
+						if (getDistanceBetweenPoints3D(cx,cy,cz,ex,ey,ez) < (global.SelectionDepth*2)) then
 							for i,v in pairs(mMagnets) do
 								for ia,va in pairs(magnets[element]) do
 									local distance = getDistanceBetweenPoints3D(va.x,va.y,va.z,v.x,v.y,v.z)

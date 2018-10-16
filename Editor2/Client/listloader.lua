@@ -1,4 +1,4 @@
-lists = {'Alpha and Non Collidable',
+objectLists = {'Alpha and Non Collidable',
 'Nighttime Objects',
 'Beach and Sea',
 'buildings',
@@ -14,8 +14,28 @@ lists = {'Alpha and Non Collidable',
 'Wires and Cables'
 }
 
+vehicleLists = {'Motorbikes',
+'Helicopters',
+'4-Door',
+'Emergency',
+'Planes, Jets and Airlines',
+'Trains',
+'Boats',
+'Lowriders',
+'Trailers',
+'SUVs and Wagons',
+'Industrial',
+'Other',
+'Trucks',
+'2-Door',
+'Bicycles',
+'Vans',
+'RC Vehicles',
+'Sports Cars'
+}
 
-for i,v in pairs(lists) do
+
+for i,v in pairs(objectLists) do
 	local File =  fileOpen('lists/'..v..'.list')   
 	local Data =  fileRead(File, fileGetSize(File))
 	local Proccessed = split(Data,10)
@@ -39,3 +59,18 @@ for i,v in pairs(lists) do
 		end
 	end
 end
+
+for i,v in pairs(vehicleLists) do
+	local File =  fileOpen('lists/vehicleLists/'..v..'.list')   
+	local Data =  fileRead(File, fileGetSize(File))
+	local Proccessed = split(Data,10)
+	fileClose (File)
+	table.insert(buttons.right.menu['New Element'].lists['Vehicles'],{v,'List'})
+	buttons.right.menu['New Element'].lists[v] = {}
+	for iA,vA in pairs(Proccessed) do
+		local Ssplit = split(vA,',')
+		table.insert(buttons.right.menu['New Element'].lists[v],{Ssplit[2],'Vehicle',nil,Ssplit[1]})
+	end
+end
+
+
