@@ -4,6 +4,7 @@
 	<script type="server" src="Server/server.lua" />
 	<script type="server" src="Server/save.lua" />
 	<script type="server" src="Server/load.lua" />
+	<script type="server" src="Server/customize.lua" />
 	
 	<script type="client" src="Client/helpers.lua" />
 	<script type="client" src="Client/colorpicker.lua" />

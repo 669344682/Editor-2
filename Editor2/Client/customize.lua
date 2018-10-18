@@ -15,11 +15,23 @@ end
 
 
 functions.prepCustomizationMenu = function()
-	cuElement = ((not isCursorShowing()) and getHighLightedElement()) or cuElement -- cuElement is globally defined and will be used for applying the 'Edits'
+	local types = {}
+	cuElement = nil
+	for i,v in pairs(selectedElements) do
+		cuElement = i
+		types[getElementType(i)] = true
+		if getElementData(i,'Edf') then
+			types['Edf'] = types['Edf'] or {}
+			table.insert(types['Edf'],getElementData(i,'Edf'))
+		end
+	end
 	
+	cuElement = cuElement or ((not isCursorShowing()) and getHighLightedElement())
+	
+
 	buttons.right.menu['Customize'] = {}
 	buttons.right.menu['Customize'].lists = {}
-	if isElement(cuElement) then
+	if cuElement and (not (types == {})) then
 		local uSlots = {}
 		table.insert(buttons.right.menu['Customize'],{'Generic','List'})
 		buttons.right.menu['Customize'].lists['Generic'] = {}
@@ -42,14 +54,15 @@ functions.prepCustomizationMenu = function()
 		global.Checked['Collidable'] = ((getElementCollisionsEnabled(cuElement)) and 1 or 2)
 		mapSetting.menuSettings['Collidable'] = tostring((getElementCollisionsEnabled(cuElement)))
 		
-		if cuElementType == 'object' then
+		if types['object'] then
 			table.insert(buttons.right.menu['Customize'],{'Object','List'})
 			buttons.right.menu['Customize'].lists['Object'] = {}
 			table.insert(buttons.right.menu['Customize'].lists['Object'],{'Breakable','Check box',isObjectBreakable(cuElement)})--
 			
 			global.Checked['Breakable'] = ((isObjectBreakable(cuElement)) and 1 or 2)
 			mapSetting.menuSettings['Breakable'] = tostring((isObjectBreakable(cuElement)))
-		elseif cuElementType == 'vehicle' then
+		end
+		if types['vehicle'] then
 			table.insert(buttons.right.menu['Customize'],{'Vehicle','List'})
 			buttons.right.menu['Customize'].lists['Vehicle'] = {}
 			
@@ -98,23 +111,31 @@ functions.prepCustomizationMenu = function()
 
 			table.insert(buttons.right.menu['Customize'].lists['Vehicle'],{'Upgrades','List'})
 			buttons.right.menu['Customize'].lists['Upgrades'] = {}
-
-			for i,v in pairs(getVehicleCompatibleUpgrades (	cuElement )) do -- cuElement
-				if not uSlots[getVehicleUpgradeSlotName (v)] then
-					uSlots[getVehicleUpgradeSlotName (v)] = true
-					table.insert(buttons.right.menu['Customize'].lists['Upgrades'],{getVehicleUpgradeSlotName (v),'List'})
-					buttons.right.menu['Customize'].lists[getVehicleUpgradeSlotName (v)] = {}
+			
+			local upgradeAdded = {}
+			for iA,vA in pairs(selectedElements) do
+				for i,v in pairs(getVehicleCompatibleUpgrades (	iA )) do -- cuElement
+					if not uSlots[getVehicleUpgradeSlotName (v)] then
+						uSlots[getVehicleUpgradeSlotName (v)] = true
+						table.insert(buttons.right.menu['Customize'].lists['Upgrades'],{getVehicleUpgradeSlotName (v),'List'})
+						buttons.right.menu['Customize'].lists[getVehicleUpgradeSlotName (v)] = {}
+					end
+					
+					local slotID = upgradeSlots[getVehicleUpgradeSlotName (v)]
+					local slot = getVehicleUpgradeOnSlot ( iA,slotID )
+					if not upgradeAdded[v] then
+						upgradeAdded[v] = true
+						table.insert(buttons.right.menu['Customize'].lists[getVehicleUpgradeSlotName (v)],{v,'Check box',(v == slot)})
+					end
 				end
-				
-				local slotID = upgradeSlots[getVehicleUpgradeSlotName (v)]
-				local slot = getVehicleUpgradeOnSlot ( cuElement,slotID )
-				table.insert(buttons.right.menu['Customize'].lists[getVehicleUpgradeSlotName (v)],{v,'Check box',(v == slot)})
 			end
 			refreshUpgrades()
-		elseif cuElementType == 'ped' then
+		end
+		if types['ped'] then
 		
-		elseif getElementData(cuElement,'Edf') then
-			local settings = edfStockPile[cuElementType]
+		end
+		if types['Edf'] then
+			--local settings = edfStockPile[cuElementType]
 		end
 	end
 end
@@ -144,75 +165,137 @@ upgradeSlots['Misc'] = 16
 
 
 function refreshUpgrades()
-	for ia=0,16 do
-		local namea = getVehicleUpgradeSlotName (ia)
-		for i,v in pairs(buttons.right.menu['Customize'].lists[namea] or {}) do
-			local name = v[1]
-			local slot = getVehicleUpgradeOnSlot ( cuElement,ia )
-			global.Checked[name] = ((name == slot) and 1 or 2)
-			
-			mapSetting.menuSettings[name] = tostring((name == slot))
+	local rChecked = {}
+	for iA,vA in pairs(selectedElements) do 
+		if getElementType(iA) == 'vehicle' then
+			for ia=0,16 do
+				local namea = getVehicleUpgradeSlotName (ia)
+				for i,v in pairs(buttons.right.menu['Customize'].lists[namea] or {}) do
+					local name = v[1]
+					local slot = getVehicleUpgradeOnSlot ( iA,ia )
+					if not rChecked[name] then
+						rChecked[name] = (name == slot)
+						global.Checked[name] = ((name == slot) and 1 or 2)
+						mapSetting.menuSettings[name] = tostring((name == slot))
+					end
+				end
+			end
 		end
 	end
 end
 
 setTimer(functions.prepCustomizationMenu,1000,0)
 
+
+PCusto = {Frozen = true,Collidable = true,Locked = true,Breakable = true,Interior = true,Dimension = true,Transparency = true}
+PCusto['Damage Proof'] = true
+PCusto['Color 1'] = true
+PCusto['Color 2'] = true
+PCusto['Color 3'] = true
+PCusto['Color 4'] = true
+
+
 function cVColor ( name,color )
-	local r,g,b,r1,g1,b1,r2,g2,b2,r3,g3,b3 = getVehicleColor ( cuElement,true )
 	local ra,ga,ba = unpack(color)
-	if name == 'Color 1' then
-		setVehicleColor ( cuElement, ra,ga,ba,r1,g1,b1,r2,g2,b2,r3,g3,b3 )   
-	elseif name == 'Color 2' then
-		setVehicleColor ( cuElement, r,g,b,ra,ga,ba,r2,g2,b2,r3,g3,b3 )   
-	elseif name == 'Color 3' then
-		setVehicleColor ( cuElement, r,g,b,r1,g1,b1,ra,ga,ba,r3,g3,b3 )   
-	elseif name == 'Color 4' then
-		setVehicleColor ( cuElement, r,g,b,r1,g1,b1,r2,g2,b2,ra,ga,ba )   
+	if PCusto[name] then
+		functions.applyCustomization(name,ra,ga,ba)
 	end
 end
 
 addEventHandler ( "Color", resourceRoot, cVColor )
 
-		
+
 function cCheckBox ( name,checked )
 	local checked = (checked == 1)
-	if name == 'Frozen' then
-		setElementFrozen(cuElement,checked)
-	elseif name == 'Collidable' then
-		setElementCollisionsEnabled(cuElement,checked)
-	elseif name == 'Damage Proof' then
-		setVehicleDamageProof(cuElement,checked)
-	elseif name == 'Locked' then
-		setVehicleLocked(cuElement,checked)
-	elseif name == 'Breakable' then
-		setObjectBreakable(name,checked)
+	if PCusto[name] then
+		functions.applyCustomization(name,checked)
 	elseif tonumber(name) then	
-		if checked then
-			addVehicleUpgrade( cuElement, tonumber(name) )
-		else
-			removeVehicleUpgrade( cuElement, tonumber(name) )
-		end
-		refreshUpgrades()
+		functions.applyCustomization('VehicleUpgrade', tonumber(name),checked)
 	end
 end
 
 addEventHandler ( "Check box", resourceRoot, cCheckBox )
 
 function cText ( name,text )
-	if name == 'Interior' then
-		setElementInterior(cuElement,tonumber(text))
-	elseif name == 'Dimension' then
-		setElementDimension(cuElement,tonumber(text))
-	elseif name == 'Transparency' then
-		setElementAlpha(cuElement,tonumber(text))
+	if PCusto[name] then
+		functions.applyCustomization(name, tonumber(text))
 	end
 end
+addEventHandler ( "onDxEdit", resourceRoot, cText )		
+		
 
-addEventHandler ( "onDxEdit", resourceRoot, cText )
+functions.applyCustomization = function (customization,...) -- KEEP THE SERVER SIDE EXACTLY LIKE THIS. (Copy from 'for i,v in pairs(selectedElements)' do to 'end' and delete refreshUpgrades() and callS)
+	for i,v in pairs(selectedElements) do
+		
+		if customization == 'Color 1' then
+			if getElementType(i) == 'vehicle' then
+				local ra,ga,ba = unpack{...}
+				local r,g,b,r1,g1,b1,r2,g2,b2,r3,g3,b3 = getVehicleColor ( i,true )
+				setVehicleColor(i, ra,ga,ba,r1,g1,b1,r2,g2,b2,r3,g3,b3)
+			end
+		elseif customization == 'Color 2' then
+			if getElementType(i) == 'vehicle' then
+				local ra,ga,ba = unpack{...}
+				local r,g,b,r1,g1,b1,r2,g2,b2,r3,g3,b3 = getVehicleColor ( i,true )
+				setVehicleColor(i, r,g,b,ra,ga,ba,r2,g2,b2,r3,g3,b3 )  
+			end
+		elseif customization == 'Color 3' then
+			if getElementType(i) == 'vehicle' then
+				local ra,ga,ba = unpack{...}
+				local r,g,b,r1,g1,b1,r2,g2,b2,r3,g3,b3 = getVehicleColor ( i,true )
+				setVehicleColor(i, r,g,b,r1,g1,b1,ra,ga,ba,r3,g3,b3 ) 
+			end
+		elseif customization == 'Color 4' then
+			if getElementType(i) == 'vehicle' then
+				local ra,ga,ba = unpack{...}
+				local r,g,b,r1,g1,b1,r2,g2,b2,r3,g3,b3 = getVehicleColor ( i,true )
+				setVehicleColor(i, r,g,b,r1,g1,b1,r2,g2,b2,ra,ga,ba )   
+			end
+		elseif customization == 'Frozen' then
+			setElementFrozen(i,...)
+		elseif customization == 'Collidable' then
+			setElementCollisionsEnabled(i,...)
+		elseif customization == 'Damage Proof' then
+			if getElementType(i) == 'vehicle' then
+				setVehicleDamageProof(i,...)
+			end
+		elseif customization == 'Locked' then
+			if getElementType(i) == 'vehicle' then
+				setVehicleLocked(i,...)
+			end
+		elseif customization == 'Breakable' then
+			if getElementType(i) == 'element' then
+				setObjectBreakable(i,...)
+			end
+		elseif customization == 'VehicleUpgrade' then
+			if getElementType(i) == 'vehicle' then
+				local ta = {...}
+				if ta[2] then
+					addVehicleUpgrade(i,...)
+				else
+					removeVehicleUpgrade(i,...)
+				end
+				refreshUpgrades()
+			end
+		elseif customization == 'Interior' then
+			setElementInterior(i,...)
+		elseif customization == 'Dimension' then
+			setElementDimension(i,...)
+		elseif customization == 'Transparency' then
+			setElementAlpha(i,...)
+		end
+	end
+	callS('applyCustomization',selectedElements,customization,...)
+end
+
+
+
+
+
+
+
 
 -- Restrucutre / optmize a bit it's a mess at the moment.
--- Make 'Customizations' sync server side.
 -- Add EDFSettings
 
 
